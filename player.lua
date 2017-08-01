@@ -2,6 +2,13 @@
  require("COMPORT")
 
 
+stx = string.char( 0x7E)
+ver = string.char( 0xFF)
+etx = string.char( 0xEF)
+
+send = { stx, ver, '', '', '', '', '', '', '', etx };
+recv = { '1', '2', '3', '4', '5', '6', '7', '8', '8', '10'};
+
 function panelPlayer()
 
     panelMP3 = wx.wxPanel(notebook, wx.wxID_ANY)
@@ -22,6 +29,27 @@ function panelPlayer()
 
 end -- panelPHONE
 
+function getRply(
+)
+	local rd_len = 1
+	local timeout = 400
+
+	for i = 1, #recv, 1 do
+		err, rply,  size = pHOST:read( rd_len, timeout )
+		recv[i] = rply
+	end -- while
+end -- getRply
+
+
+get_checksum (
+) {
+	local sum = 0;
+	for i=2; 6; 1) {
+		sum = sum + send[i];
+	}
+}
+
+
 -- Handle the button event
 
 function On1Track(event)
@@ -38,9 +66,8 @@ function On1Track(event)
 	sendCOM_HOST( string.char( 0xE6))
 	sendCOM_HOST( string.char( 0xEF))
 
---	local rpl = getRply()
---	print ("?"..rpl)
---	local rpl = getRply()
---	print ("?"..rpl)
+	getRply()
 	closeCOM_HOST()
-end -- OnBUSY(event)
+	print('byte#3'..recv[4])
+	print('byte#6'..recv[7])
+end -- On1Track(event)

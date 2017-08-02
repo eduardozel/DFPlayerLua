@@ -40,14 +40,21 @@ function getRply(
 	end -- while
 end -- getRply
 
+function DEC_HEX(IN)
+--	local hx ="0123456789ABCDEF"
+--	local t0 = t % 16
+--	local t1 = math.floor( t / 16 )
+--string.sub( hx,D,D)
+	return string.format("%x", IN )
+end -- DEC_HEX
 
-get_checksum (
-) {
-	local sum = 0;
-	for i=2; 6; 1) {
-		sum = sum + send[i];
-	}
-}
+function get_checksum (
+)
+	local sum = 0
+	for i = 2, 6, 1 do
+		sum = sum + send[i]
+	end
+end
 
 
 -- Handle the button event
@@ -68,6 +75,10 @@ function On1Track(event)
 
 	getRply()
 	closeCOM_HOST()
-	print('byte#3'..recv[4])
-	print('byte#6'..recv[7])
+	local t = string.byte( recv[4] )
+	local t3 = DEC_HEX( t )
+	t = string.byte( recv[7] )
+	local t6 = DEC_HEX( t )
+	print( t3 )
+	print( t6 )
 end -- On1Track(event)

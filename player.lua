@@ -39,6 +39,16 @@ function DEC_HEX(IN)
 	return string.format("%x", IN )
 end -- DEC_HEX
 
+function HEX_DEC(IN)
+	local t1 = string.sub(IN,  1, 1)
+	local t0 = string.sub(IN, -1)
+	local hx ="0123456789ABCDEF"
+	local d1 = string.find( hx, t1) -1
+	local d0 = string.find( hx, t0) -1
+	local ou =d1*16+d0
+	return ou
+end -- DEC_HEX
+
 
 function getRply(
 )
@@ -58,8 +68,15 @@ function get_checksum (
 	for i = 2, 7, 1 do
 		sum = sum + string.byte( send[i] )
 	end -- for
-print(-sum )
-print( string.format("%x", -sum ) )
+	local t = string.sub( string.format("%X", -sum ), - 4 )
+	local s1 = string.sub( t, 1, 2)
+	local s0 = string.sub( t, -2)
+	local sm1 = string.char( HEX_DEC(s1) )
+	local sm0 = string.char( HEX_DEC(s0) )
+
+	send[8] = sm1 -- chSm1
+	send[9] = sm0 -- chSm0
+
 end -- get_checksum 
 
 function mp3_next (
@@ -82,7 +99,7 @@ function SendCommand(
 )
 	get_checksum()
 	for i = 1, 10, 1 do
-		sendCOM_HOST( send[i])
+		sendCOM_HOST( send[i] )
 	end
 end -- SendCommand
 
@@ -96,10 +113,7 @@ function On1Track(event)
 	send[5] = string.char( 0x00) -- feedback
 
 	send[6] = string.char( 0x00) -- para1
-	send[7] = string.char( 0x01) -- para2
-
-	send[8] = string.char( 0xFE) -- chSm1
-	send[9] = string.char( 0xF7) -- chSm0
+	send[7] = string.char( 0x02) -- para2
 
 	SendCommand()
 

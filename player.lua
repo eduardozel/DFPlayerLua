@@ -18,14 +18,18 @@ function panelPlayer()
 
 	btnSize = wx.wxSize( 60, 30)
 
-    ID_PN_BUSY			= 4001
-    ID_BUTTON_BUSY		= 4034
-
+	ID_PN_Play		= 4001
+	ID_BUTTON_Play		= 4034
+	ID_SPIN_Track		= 4035
 -- ----
-	pnBUSY = wx.wxStaticBox(panelMP3, ID_PN_BUSY, "???", wx.wxPoint( 10, 10), wx.wxSize( 320, 50) )	
+	pnPLAY = wx.wxStaticBox(panelMP3, ID_PN_Play, "play track", wx.wxPoint( 10, 10), wx.wxSize( 320, 50) )	
 
-    btnBUSY = wx.wxButton( pnBUSY, ID_BUTTON_BUSY, "first track",  wx.wxPoint( 15, 10), btnSize )
-    frame:Connect( ID_BUTTON_BUSY, wx.wxEVT_COMMAND_BUTTON_CLICKED, On1Track)	
+    btnPlay = wx.wxButton( pnPLAY, ID_BUTTON_Play, "play",  wx.wxPoint( 150, 10), btnSize )
+    frame:Connect( ID_BUTTON_Play, wx.wxEVT_COMMAND_BUTTON_CLICKED, OnPlay)	
+
+    spnTrack = wx.wxSpinCtrl( pnPLAY, ID_SPIN_Track, "1", wx.wxPoint( 15, 15), wx.wxSize( 60, 30) )
+    spnTrack:SetToolTip("track")
+
 	
     notebook:AddPage(panelMP3, "player")
 
@@ -105,15 +109,16 @@ end -- SendCommand
 
 -- Handle the button event
 
-function On1Track(event)
-	print ("first track ")
+function OnPlay(event)
+	local track = spnTrack:GetValue()
+	print ("play track "..track)
 	openCOM_HOST()
 	send[4] = string.char( 0x03) -- cmd
 
 	send[5] = string.char( 0x00) -- feedback
 
 	send[6] = string.char( 0x00) -- para1
-	send[7] = string.char( 0x02) -- para2
+	send[7] = string.char( track )  -- para2
 
 	SendCommand()
 
@@ -124,6 +129,4 @@ function On1Track(event)
 	local t3 = DEC_HEX( t )
 	t = string.byte( recv[7] )
 	local t6 = DEC_HEX( t )
-	print( t3 )
-	print( t6 )
-end -- On1Track(event)
+end -- OnPlay(event)
